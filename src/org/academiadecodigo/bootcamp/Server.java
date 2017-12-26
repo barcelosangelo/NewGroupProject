@@ -24,8 +24,6 @@ public class Server {
         server.start();
 
 
-
-
     }
 
     private int port = 8080;
@@ -34,6 +32,7 @@ public class Server {
     ExecutorService fixedPool = Executors.newFixedThreadPool(3);
 
     public void start() {
+
 
         try {
             serverSocket = new ServerSocket(port);
@@ -49,7 +48,6 @@ public class Server {
                 }
                 clientSocket = serverSocket.accept();
                 System.out.println("Server is now connected and waiting for requests at port number: " + port);
-
                 clientHandler = new ClientHandler(clientSocket);
                 fixedPool.submit(clientHandler);
                 clientList.add(clientHandler);
@@ -57,8 +55,6 @@ public class Server {
             } catch (IOException e) {
                 System.out.println("Missing port number");
             }
-
-            System.out.println(clientList.get(0).toString());
 
         }
     }
@@ -91,46 +87,30 @@ public class Server {
 
         PrintWriter out;
         BufferedReader in;
-        String name;
 
         public ClientHandler(Socket clientSocket) {
             try {
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
+
         public void run() {
-
-            try {
-                setName();
-
-
-
             while (true) {
+                try {
                     if(clientList.size() > 0) {
                         String message = in.readLine();
                         sendAll(message);
                     }
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             }
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void setName() throws IOException {
-            System.out.print("username: ");
-            name = in.readLine();
-        }
-
-        public String getName(){
-            return name;
         }
 
         public void send(String message) {
@@ -140,3 +120,5 @@ public class Server {
     }
 
 }
+
+
