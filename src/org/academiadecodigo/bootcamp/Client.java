@@ -34,8 +34,7 @@ public class Client {
             hostName = inReader.readLine();
             System.out.print("port: ");
             port = Integer.parseInt(inReader.readLine());
-            System.out.print("username: ");
-            userName = inReader.readLine();
+
 
 
             clientSocket = new Socket(hostName, port);
@@ -53,9 +52,10 @@ public class Client {
 
                 Thread thread = new Thread(clientHelper);
                 thread.start();
-                String message = null;
+                String message;
                 message = in.readLine();
                 System.out.println(message);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
