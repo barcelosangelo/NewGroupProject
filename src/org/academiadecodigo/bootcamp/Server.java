@@ -1,124 +1,104 @@
 package org.academiadecodigo.bootcamp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
+
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 public class Server {
 
-    ServerSocket serverSocket = null;
-    Socket clientSocket = null;
-    //Game game = null;
+    //private int port = 8080;
+    //private List<Client> clientList = Collections.synchronizedList(new ArrayList<Client>());
 
-    public static void main(String[] args) {
-
-        Server server = new Server();
-        server.start();
+    public static void main(String args[]) throws Exception {
 
 
-    }
+        String responseClient1 = " ";
+        String responseClient2 = " ";
+        String inputClient1;
+        String inputClient2;
 
-    private int port = 8080;
-    private List <ClientHandler> clientList = Collections.synchronizedList(new ArrayList<ClientHandler>());
-    private ClientHandler clientHandler;
-    ExecutorService fixedPool = Executors.newFixedThreadPool(3);
+        // new server socket
+        ServerSocket initialSocket = new ServerSocket(8080);
+        System.out.println("Waiting for players");
 
-    public void start() {
+        while (!initialSocket.isClosed()) {
+
+            // Player 1
+            Socket client1 = initialSocket.accept();
+            System.out.println("Player 1 is connected");
+
+            DataOutputStream outClient1 = new DataOutputStream(client1.getOutputStream());
+            BufferedReader inClient1 = new BufferedReader(new InputStreamReader(client1.getInputStream()));
+
+            // Player 2
+            Socket client2 = initialSocket.accept();
+            System.out.println("Player 2 is connected");
+
+            DataOutputStream outClient2 = new DataOutputStream(client2.getOutputStream());
+            BufferedReader inClient2 = new BufferedReader(new InputStreamReader(client2.getInputStream()));
 
 
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        while (true) {
-            try {
-                if(clientList.size() == 2) {
-                    clientSocket = serverSocket.accept();
-                    clientSocket.close();
-                    System.out.println("Server is full");
-                }
-                clientSocket = serverSocket.accept();
-                System.out.println("Server is now connected and waiting for requests at port number: " + port);
-                clientHandler = new ClientHandler(clientSocket);
-                fixedPool.submit(clientHandler);
-                clientList.add(clientHandler);
-                //game = new Game(3, clientList.get(0), clientList.get(1));
-            } catch (IOException e) {
-                System.out.println("Missing port number");
+            String handClient1 = inClient1.readLine();
+            inputClient1 = handClient1.toUpperCase();
+            System.out.println(inputClient1);
+
+            String handClient2 = inClient2.readLine();
+            inputClient2 = handClient2.toUpperCase();
+            System.out.println(inputClient2);
+
+
+
+            if (inputClient1.equals(inputClient2)) {
+                responseClient1 = "Draw";
+                responseClient2 = "Draw";
+                System.out.println("It's a draw.");
+
+            } else if (inputClient1.equals("R") && inputClient2.equals("S")) {
+                responseClient1 = "You win";
+                responseClient2 = "You lose";
+                System.out.println("Rock beats Scissors, Player one wins.");
+
+            } else if (inputClient1.equals("S") && inputClient2.equals("R")) {
+                responseClient1 = "You lose";
+                responseClient2 = "You win";
+                System.out.println("Rock beats Scissors, Player two wins.");
+
+            } else if (inputClient1.equals("R") && inputClient2.equals("P")) {
+                responseClient1 = "You lose";
+                responseClient2 = "You win";
+                System.out.println("Paper beats Rock, Player two wins.");
+
+            } else if (inputClient1.equals("P") && inputClient2.equals("R")) {
+                responseClient1 = "You win";
+                responseClient2 = "You lose";
+                System.out.println("Paper beats Rock, Player one wins.");
+
+            } else if (inputClient1.equals("S") && inputClient2.equals("P")) {
+                responseClient1 = "You win";
+                responseClient2 = "You lose";
+                System.out.println("Scissors beats Paper, Player one wins.");
+
+            } else if (inputClient1.equals("P") && inputClient2.equals("S")) {
+                responseClient1 = "You lose";
+                responseClient2 = "You win";
+                System.out.println("Scissors beats Paper, Player two wins.");
             }
 
-        }
-    }
-
-    public void sendAll(String message) {
-
-        if(clientList.size() > 2){
-            for (int i = 0; i < clientList.size(); i++) {
-                clientList.get(i).send("Too many players");
-                try {
-                    clientSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            clientList.clear();
+            // Send responses and close sockets
+            outClient1.writeBytes(responseClient1);
+            outClient2.writeBytes(responseClient2);
+            client1.close();
+            client2.close();
 
 
-        }
-        if(clientList.size() > 0) {
-            for (int i = 0; i < clientList.size(); i++) {
-                clientList.get(i).send(message);
-            }
-        }
+            System.out.println("Waiting for new players ...");
 
-    }
-
-
-    private class ClientHandler implements Runnable {
-
-        PrintWriter out;
-        BufferedReader in;
-
-        public ClientHandler(Socket clientSocket) {
-            try {
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        public void run() {
-            while (true) {
-                try {
-                    if(clientList.size() > 0) {
-                        String message = in.readLine();
-                        sendAll(message);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        public void send(String message) {
-            out.println(message);
         }
 
     }
-
 }
-
 

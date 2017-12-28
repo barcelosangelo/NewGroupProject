@@ -1,108 +1,45 @@
 package org.academiadecodigo.bootcamp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 
-public class Client {
+import java.io.*;
+import java.net.*;
 
-    public static void main(String[] args) {
-
-        Client client = new Client();
-        client.start();
-
-    }
-
-    private int port;
-    private String hostName;
-    private String userName;
-    private ClientHelper clientHelper;
-    PrintWriter out;
-    BufferedReader in;
-    Socket clientSocket = null;
-    BufferedReader inReader;
-
-    public void start() {
-
-        inReader = new BufferedReader(new InputStreamReader(System.in));
-
-        try {
-
-            System.out.print("hostname: ");
-            hostName = inReader.readLine();
-            System.out.print("port: ");
-            port = Integer.parseInt(inReader.readLine());
-            System.out.print("username: ");
-            userName = inReader.readLine();
+class Client {
 
 
-            clientSocket = new Socket(hostName, port);
-
-            System.out.println("Connection established with " + hostName + " on port " + port + "\n");
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        while (clientSocket.isBound()) {
-            try {
-                clientHelper = new ClientHelper(clientSocket);
-
-                Thread thread = new Thread(clientHelper);
-                thread.start();
-                String message;
-                message = in.readLine();
-                System.out.println(message);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-    }
+    private static String host = "localhost";
+    private static int port = 8080;
 
 
-    private class ClientHelper implements Runnable {
 
-        PrintWriter out2;
-        BufferedReader in2;
+    public static void main(String args[]) throws Exception {
+
+        String response;
+
+        Socket clientSocket = new Socket(host, port);
+        PrintWriter out = new PrintWriter (new OutputStreamWriter(clientSocket.getOutputStream()), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        BufferedReader inFromTerminal = new BufferedReader(new InputStreamReader(System.in));  //
+
+        System.out.println("Welcome to Rock, Paper; Scissors");
+        System.out.println("Make your move: (P)aper, (R)ock, (S)cissors");
+        System.out.println("You play: ");
+
+        String messageFromTerminal = inFromTerminal.readLine();
+        out.println(messageFromTerminal);
+        System.out.println(messageFromTerminal + " printed move");
 
 
-        public ClientHelper(Socket clientSocket) {
 
-            try {
-
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // responses
+        response = in.readLine();
 
 
-        }
+        // sout responses
+        System.out.println("Result: " + response);
 
-        @Override
-        public void run() {
-            while (clientSocket.isBound()) {
-                try {
-                    System.out.print("Your message: ");
-                    String message = null;
+        clientSocket.close();
 
-                    message = inReader.readLine();
 
-                    out.println(userName + ":" + message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        public String getUserName() {
-            return userName;
-        }
     }
 }
