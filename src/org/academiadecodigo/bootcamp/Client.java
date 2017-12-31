@@ -22,12 +22,15 @@ class Client {
         BufferedReader inFromTerminal = new BufferedReader(new InputStreamReader(System.in));  //
 
         System.out.println("Welcome to Rock, Paper; Scissors");
+        System.out.println("*---------------*---------------*");
+        System.out.println("");
         System.out.println("Make your move: (P)aper, (R)ock, (S)cissors");
         System.out.println("You play: ");
 
         String messageFromTerminal = inFromTerminal.readLine();
         out.println(messageFromTerminal);
-        System.out.println(messageFromTerminal + " printed move");
+        System.out.println(messageFromTerminal + " player choice");
+
 
 
 
