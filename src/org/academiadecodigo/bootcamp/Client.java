@@ -35,7 +35,6 @@ class Client {
         response = in.readLine();
 
 
-        // sout responses
         System.out.println("Result: " + response);
 
         clientSocket.close();

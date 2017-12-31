@@ -87,6 +87,13 @@ public class Server {
                 responseClient2 = "You win";
                 System.out.println("Scissors beats Paper, Player two wins.");
             }
+              else if(inputClient2 != "P" || inputClient2 != "S" || inputClient2 != "R" || inputClient1 != "P" || inputClient1 != "R" || inputClient2 != "S"){
+                System.out.println("Please use a valid move");
+                responseClient1 = "Please use a valid move";
+                responseClient2 = "Please use a valid move";
+
+            }
+
 
             // Send responses and close sockets
             outClient1.writeBytes(responseClient1);
