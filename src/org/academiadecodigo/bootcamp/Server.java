@@ -44,11 +44,11 @@ public class Server {
 
             String handClient1 = inClient1.readLine();
             inputClient1 = handClient1.toUpperCase();
-            System.out.println(inputClient1);
+            System.out.println("Player 1 plays:"  + inputClient1);
 
             String handClient2 = inClient2.readLine();
             inputClient2 = handClient2.toUpperCase();
-            System.out.println(inputClient2);
+            System.out.println("Player 2 plays:" + inputClient2);
 
 
 
@@ -87,12 +87,11 @@ public class Server {
                 responseClient2 = "You win";
                 System.out.println("Scissors beats Paper, Player two wins.");
             }
-              else if(inputClient2 != "P" || inputClient2 != "S" || inputClient2 != "R" || inputClient1 != "P" || inputClient1 != "R" || inputClient2 != "S"){
-                System.out.println("Please use a valid move");
-                responseClient1 = "Please use a valid move";
-                responseClient2 = "Please use a valid move";
 
-            }
+
+
+
+
 
 
             // Send responses and close sockets

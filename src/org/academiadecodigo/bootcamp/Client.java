@@ -28,8 +28,15 @@ class Client {
         System.out.println("You play: ");
 
         String messageFromTerminal = inFromTerminal.readLine();
+        while(!messageFromTerminal.toUpperCase().equals("S") && !messageFromTerminal.toUpperCase().equals("P") &&  !messageFromTerminal.toUpperCase().equals("R")) {
+            System.out.println("Please use a valid move...PLease choose one of the valid options(R, S or P):");
+            inFromTerminal = new BufferedReader(new InputStreamReader(System.in));
+            messageFromTerminal = inFromTerminal.readLine();
+    }
+
         out.println(messageFromTerminal);
         System.out.println(messageFromTerminal + " player choice");
+
 
 
 
